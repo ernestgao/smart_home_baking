@@ -127,7 +127,9 @@ class Server {
 
   modify = (req, res) => {
     try {
-      const { sugar, oil } = req.body;
+      let { sugar, oil } = req.body;
+      sugar = parseFloat(sugar);
+      oil = parseFloat(oil);
       let amount = this.baker.biscuit.adjust_amount(sugar, oil);
       let tastes = this.baker.biscuit.taste_predict();
       let calorie = this.baker.biscuit.caculate_calorie();
@@ -144,16 +146,18 @@ class Server {
 
   adjust = (req, res) => {
     try {
-      const { sweetness, texture, milkiness } = req.body;
+      let { sweetness, texture, milkiness } = req.body;
+      sweetness = parseInt(sweetness);
+      texture = parseInt(texture);
+      milkiness = parseInt(milkiness);
       let amount = this.baker.biscuit.adjust_portion(
         sweetness,
-        texture,
-        milkiness
+        texture
       );
       let tastes = {
-        甜度: sweetness,
-        口感: texture,
-        奶香: milkiness,
+        sweetness: sweetness,
+        texture: texture,
+        milkiness: milkiness,
       };
       let calorie = this.baker.biscuit.caculate_calorie();
       let results = {

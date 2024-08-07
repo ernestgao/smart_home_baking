@@ -48,11 +48,11 @@ class Biscuit {
   // display and return amounts
   get_amounts() {
     return {
-      黄油: this._oil.amount,
-      低筋面粉: this._flour.amount,
-      细砂糖: this._sugar.amount,
-      蛋白液: this._liquid.amount,
-      蔓越莓干: this._berry.amount,
+      oil: this._oil.amount,
+      flour: this._flour.amount,
+      sugar: this._sugar.amount,
+      liquid: this._liquid.amount,
+      berry: this._berry.amount,
     };
   }
 
@@ -61,15 +61,9 @@ class Biscuit {
     this._sugar.amount = sugar;
     this._oil.amount = oil;
     this._flour.amount = sugar + oil;
-    this._liquid.amount = this.total - (sugar + oil) * 2;
+    this._liquid.amount = this._total - (sugar + oil) * 2;
     this.update_total();
-    return {
-      黄油: this._oil.amount,
-      低筋面粉: this._flour.amount,
-      细砂糖: this._sugar.amount,
-      蛋白液: this._liquid.amount,
-      蔓越莓干: this._berry.amount,
-    };
+    return this.get_amounts();
   }
 
   // Based on the ratio of each ingredients, give the sweetness, texture, and milk flavor on a scale of 6 in an object form
@@ -78,39 +72,28 @@ class Biscuit {
   // milk: 6 -> light, 1 -> strong
   taste_predict() {
     let sweet, texture, milk;
-    try {
-      sweet = this.get_scale(
-        (this._sugar.amount / this._total).toFixed(3),
-        Biscuit.sweet_range,
-        "sugar"
-      );
-      texture = this.get_scale(
-        (this._oil.amount / this._total).toFixed(3),
-        Biscuit.texture_range,
-        "oil"
-      );
-      milk = this.get_scale(
-        (this._liquid.amount / this._total).toFixed(3),
-        Biscuit.milk_range,
-        "liquid"
-      );
-    } catch (error) {
-      console.error(`Error: ${error.message}`);
-    }
+    sweet = this.get_scale(
+      (this._sugar.amount / this._total).toFixed(3),
+      Biscuit.sweet_range
+    );
+    texture = this.get_scale(
+      (this._oil.amount / this._total).toFixed(3),
+      Biscuit.texture_range
+    );
+    milk = this.get_scale(
+      (this._liquid.amount / this._total).toFixed(3),
+      Biscuit.milk_range
+    );
     return {
-      甜度: sweet,
-      口感: texture,
-      奶香: milk,
+      sweetness: sweet,
+      texture: texture,
+      milkiness: milk,
     };
   }
 
   // helpers that return the scale, throws error if too much or too less
-  get_scale(percentage, range, ingredient) {
+  get_scale(percentage, range) {
     percentage = percentage * 100;
-    if (percentage > range[0]) {
-      throw new Error(`Too much ${ingredient}`);
-    }
-
     let scaleValue;
     switch (true) {
       case percentage >= range[6] && percentage <= range[5]:
@@ -128,18 +111,19 @@ class Biscuit {
       case percentage > range[2] && percentage <= range[1]:
         scaleValue = 5;
         break;
-      case percentage > range[1] && percentage <= range[0]:
+      case percentage > range[1]:
         scaleValue = 6;
         break;
       default:
-        throw new Error(`Too less ${ingredient}`);
+        scaleValue = 1;
+        break;
     }
     return scaleValue;
   }
 
   // Based on the value of the tastes, provide a sugeested amount of ingredients
-  adjust_portion(sweet, texture, milk) {
-    let sugar, oil, liquid;
+  adjust_portion(sweet, texture) {
+    let sugar, oil, new_sugar_amount, new_oil_amount;
     let sr = 7 - texture;
     if (Math.abs(sweet - sr) <= 1) {
       sugar = parseFloat(
@@ -148,35 +132,28 @@ class Biscuit {
           2
         ).toFixed(2)
       );
-      oil = Biscuit.oil_values[texture] + Biscuit.sugar_values[sweet] - sugar;
-      liquid = Biscuit.liquid_values[milk - 1];
-      this._sugar.amount = parseFloat(
+      oil =
+        Biscuit.oil_values[texture - 1] +
+        Biscuit.sugar_values[sweet - 1] -
+        sugar;
+      new_sugar_amount = parseFloat(
         (this._flour.amount * (sugar / (sugar + oil))).toFixed(2)
       );
-      this._oil.amount = parseFloat(
+      new_oil_amount = parseFloat(
         (this._flour.amount * (oil / (sugar + oil))).toFixed(2)
       );
-      this._liquid.amount = parseFloat(
-        (this._total * (liquid / ((sugar + oil) * 2 + liquid))).toFixed(2)
-      );
-      this.update_total;
-      return this.get_amounts();
+      return this.adjust_amount(new_sugar_amount, new_oil_amount);
     } else if (Math.abs(sweet - sr) == 2) {
       let s = (sr + sweet) / 2;
       sugar = Biscuit.sugar_values[s - 1];
       oil = Biscuit.oil_values[7 - s - 1];
-      liquid = Biscuit.liquid_values[milk - 1];
-      this._sugar.amount = parseFloat(
+      new_sugar_amount = parseFloat(
         (this._flour.amount * (sugar / (sugar + oil))).toFixed(2)
       );
-      this._oil.amount = parseFloat(
+      new_oil_amount = parseFloat(
         (this._flour.amount * (oil / (sugar + oil))).toFixed(2)
       );
-      this._liquid.amount = parseFloat(
-        (this._total * (liquid / ((sugar + oil) * 2 + liquid))).toFixed(2)
-      );
-      this.update_total;
-      return this.get_amounts();
+      return this.adjust_amount(new_sugar_amount, new_oil_amount);
     } else {
       return this.plan(this._num_portion);
     }
@@ -184,13 +161,13 @@ class Biscuit {
 
   // Calculate the total calories of the cookie
   caculate_calorie() {
-    return (
+    return parseInt(
       this._sugar.amount * Biscuit.sugar_calorie +
-      this._oil.amount * Biscuit.oil_calorie +
-      this._flour.amount * Biscuit.flour_calorie +
-      this._liquid.amount * Biscuit.liquid_calorie +
-      this._berry.amount * Biscuit.berry_calorie
-    ).toFixed(2);
+        this._oil.amount * Biscuit.oil_calorie +
+        this._flour.amount * Biscuit.flour_calorie +
+        this._liquid.amount * Biscuit.liquid_calorie +
+        this._berry.amount * Biscuit.berry_calorie
+    );
   }
 }
 
