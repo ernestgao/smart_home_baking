@@ -61,7 +61,12 @@ class Biscuit {
     this._sugar.amount = sugar;
     this._oil.amount = oil;
     this._flour.amount = sugar + oil;
-    this._liquid.amount = this._total - (sugar + oil) * 2;
+    let newLiquid = this._total - (sugar + oil) * 2;
+    if (newLiquid < 0) {
+      this._liquid.amount = 0;
+    } else {
+      this._liquid.amount = newLiquid;
+    }
     this.update_total();
     return this.get_amounts();
   }

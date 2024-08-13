@@ -1,6 +1,6 @@
 class Baker {
-  constructor(name, biscuit) {
-    this._name = name;
+  constructor(uid, biscuit) {
+    this._uid = uid;
     this._biscuit = biscuit;
   }
 
@@ -14,8 +14,8 @@ class Baker {
     // todo
   }
 
-  get name() {
-    return this._name;
+  get uid() {
+    return this._uid;
   }
 
   get biscuit() {

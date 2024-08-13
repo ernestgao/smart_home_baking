@@ -3,6 +3,7 @@ import http from "http";
 import cors from "cors";
 import Baker from "../controller/baker.js";
 import Biscuit from "../controller/biscuit.js";
+import { client, connectDB } from "../db.js";
 import {
   Ingredient,
   Oil,
@@ -18,29 +19,10 @@ class Server {
     this.port = port;
     this.express = express();
     this.server = undefined;
-    let oil, flour, sugar, liquid, berry;
-    oil = new Oil();
-    flour = new Flour();
-    sugar = new Sugar();
-    liquid = new Liquid();
-    berry = new Berry();
-    this.baker = new Baker(
-      "user",
-      new Biscuit(oil, flour, sugar, liquid, berry)
-    );
+    this.db = undefined;
+    this.baker = null;
     this.registerMiddleware();
     this.registerRoutes();
-  }
-
-  /**
-   * @param {Baker} newBaker
-   */
-  set baker(newBaker) {
-    this._baker = newBaker;
-  }
-
-  get baker() {
-    return this._baker;
   }
 
   /**
@@ -51,12 +33,27 @@ class Server {
    * @returns {Promise<void>}
    */
   start() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       console.info("Server::start() - start");
       if (this.server !== undefined) {
         console.error("Server::start() - server already listening");
         reject(new Error("Server is already running."));
       } else {
+        try {
+          await connectDB();
+          this.db = client.db("BaKing");
+          console.info("Server::start() - Database connected");
+        } catch (err) {
+          console.error(
+            `Server::start() - Database connection ERROR: ${err.message}`
+          );
+          reject(
+            new Error(
+              "Failed to connect to the database. Server will not start."
+            )
+          );
+          return;
+        }
         this.server = this.express
           .listen(this.port, () => {
             console.info(
@@ -81,11 +78,12 @@ class Server {
    */
   stop() {
     console.info("Server::stop()");
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (this.server === undefined) {
         console.error("Server::stop() - ERROR: server not started");
         reject(new Error("Server is not running."));
       } else {
+        await client.close();
         this.server.close(() => {
           console.info("Server::stop() - server closed");
           resolve();
@@ -102,10 +100,48 @@ class Server {
 
   registerRoutes() {
     this.express.get("/echo/:msg", Server.echo);
+    this.express.get("/login/:user", this.login);
     this.express.get("/plan/:num_portion", this.plan);
     this.express.post("/modify", this.modify);
     this.express.post("/adjust", this.adjust);
   }
+
+  // user login
+  login = async (req, res) => {
+    try {
+      const { uid } = req.params;
+      const users = this.db.collection("Users");
+      const user = await users.findOne({ uid: uid });
+      let oil, flour, sugar, liquid, berry;
+      if (user) {
+        oil = new Oil(user.biscuit.oil.name, user.biscuit.oil.amount);
+        flour = new Flour(user.biscuit.flour.name, user.biscuit.flour.amount);
+        sugar = new Sugar(user.biscuit.sugar.name, user.biscuit.sugar.amount);
+        liquid = new Liquid(
+          user.biscuit.liquid.name,
+          user.biscuit.liquid.amount
+        );
+        berry = new Berry(user.biscuit.berry.name, user.biscuit.berry.amount);
+        this._baker = new Baker(
+          uid,
+          new Biscuit(oil, flour, sugar, liquid, berry)
+        );
+      } else {
+        oil = new Oil();
+        flour = new Flour();
+        sugar = new Sugar();
+        liquid = new Liquid();
+        berry = new Berry();
+        this._baker = new Baker(
+          uid,
+          new Biscuit(oil, flour, sugar, liquid, berry)
+        );
+        users.insertOne(this._baker);
+      }
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
   // return amount, tastes, calorie
   plan = (req, res) => {
@@ -150,10 +186,7 @@ class Server {
       sweetness = parseInt(sweetness);
       texture = parseInt(texture);
       milkiness = parseInt(milkiness);
-      let amount = this.baker.biscuit.adjust_portion(
-        sweetness,
-        texture
-      );
+      let amount = this.baker.biscuit.adjust_portion(sweetness, texture);
       let tastes = {
         sweetness: sweetness,
         texture: texture,

@@ -1,5 +1,6 @@
 import React, {useState, useEffect}from 'react';
 import '../styles/group1.css';
+import image from '../assets/default.jpg';
 
 const Group1 = () => {
   const url = 'https://really-touching-gull.ngrok-free.app';
@@ -13,9 +14,12 @@ const Group1 = () => {
   const [milkinessValue, setMilkinessValue] = useState(1);
   const [outputCalorie, setOutputCalorie] = useState(0);
   const sum = inputOil + inputSugar + outputLiquid + outputFlour + outputBerry;
+  const caloriePerGram = 100 * parseFloat((outputCalorie/sum).toFixed(2));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userChangeTaste, setUserTaste] = useState(false);
+  const [userChangeAmount, setUserAmount] = useState(false);
+
 
   // initialization
   useEffect(() => {
@@ -46,12 +50,33 @@ const Group1 = () => {
   //amount part
   const handleOilChange = (e) => {
     setInputOil(parseFloat(e.target.value));
+    setUserAmount(true);
   };
   const handleSugarChange = (e) => {
     setInputSugar(parseFloat(e.target.value));
+    setUserAmount(true);
   };
-  const handleModify = async (e) => {
-    e.preventDefault();
+  const handleOilDecrement = () => {
+    setInputOil(prevOil => Math.max(prevOil - 1, 0));
+    setUserAmount(true);
+  };
+  const handleOilIncrement = () => {
+    setInputOil(prevOil => prevOil + 1);
+    setUserAmount(true);
+  };
+
+  const handleSugarDecrement = () => {
+    setInputSugar(prevSugar => Math.max(prevSugar - 1, 0));
+    setUserAmount(true);
+  };
+  const handleSugarIncrement = () => {
+    setInputSugar(prevSugar => prevSugar + 1);
+    setUserAmount(true);
+  };
+
+  useEffect(() => {
+    if (!userChangeAmount) return;
+    async function fetchData() {
     setLoading(true);
     setError(null);
 
@@ -71,7 +96,7 @@ const Group1 = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      let result = await response.json();
+      const result = await response.json();
 
       getResults(result);
 
@@ -80,7 +105,10 @@ const Group1 = () => {
     } finally {
       setLoading(false);
     }
-  };
+    }
+    fetchData();
+    setUserAmount(false);
+  }, [inputOil, inputSugar, userChangeAmount]);
 
   // taste part
   useEffect(() => {
@@ -148,96 +176,145 @@ const Group1 = () => {
 
   return (
     <div className="flex-col page">
-      <div className="flex-row justify-center items-center self-start section">
-        <div className="section_2 view"></div>
-        <span className="font text ml-7">蔓越莓饼干</span>
-        <div className="section_2 view_2 ml-7"></div>
-      </div>
-      <div className="flex-col self-stretch group">
-        <div className="flex-row">
-          <div className="flex-col justify-start items-start text-wrapper">
-            <span className="font_2 text_2">我的饼干</span>
-          </div>
-          <div className="flex-col items-start section_3">
-            <span className="font_2 text_3">口味</span>
-            <span className="font text_5">甜度</span>
-            <div className="slidecontainer1">
-              <input type="range" min="1" max="6" value={sweetnessValue} className="slider" id="myRange1" onChange={(e) => handleTasteChange(e, setSweetnessValue)}/>
-            </div>
-            <span className="font text_6">口感</span>
-            <div className="slidecontainer2">
-              <input type="range" min="1" max="6" value={textureValue} className="slider" id="myRange2" onChange={(e) => handleTasteChange(e, setTextureValue)}/>
-            </div>
-            <span className="font text_8">奶香</span>
-            <div className="slidecontainer3">
-              <input type="range" min="1" max="6" value={milkinessValue} className="slider" id="myRange3" onChange={(e) => handleTasteChange(e, setMilkinessValue)}/>
-            </div>
-          </div>
-          <div className="flex-col section_4">
-            <span className="self-start font_2 text_4">热量</span>
-            <b>{outputCalorie}</b>
-            <span className="self-center font text_7 mt-108">卡路里</span>
-          </div>
-        </div>
-        <div className="flex-row mt-17">
-          <div className="flex-col shrink-0 section_5">
-            <div className="flex-row items-center group_2">
-              <span className="font_2">食谱</span>
-              <button onClick={handleModify} className="font_2 text_9 ml-299">修改</button>
-            </div>
-            <div className="divider"></div>
-            <div className="flex-row items-center group_3">
-              <span className="font_3 text_11">食 材</span>
-              <span className="font_3 text_12 ml-223">用 量/g</span>
-            </div>
-            <div className="divider"></div>
-            <div className="flex-row items-center group_4">
-              <span className="font_3 text_14">黄 油</span>
-              <input type="number" class="font_4 text_16 ml-236" value={inputOil} onChange={handleOilChange}></input>
-            </div>
-            <div className="divider_2"></div>
-            <div className="flex-row items-center group_5">
-              <span className="font_3 text_18">细 砂 糖</span>
-              <input type="number" className="font_4 text_19 ml-230" value={inputSugar} onChange={handleSugarChange}></input>
-            </div>
-            <div className="divider_2"></div>
-            <div className="flex-row items-center group_6">
-              <span className="font_3 text_21">蛋白液</span>
-              <span className="font_4 ml-236">{outputLiquid}</span>
-            </div>
-            <div className="divider"></div>
-            <div className="flex-row items-center group_7">
-              <span className="font_3 text_23">低筋面粉</span>
-              <span className="font_4 ml-226">{outputFlour}</span>
-            </div>
-            <div className="divider"></div>
-            <div className="flex-row items-center group_8">
-              <span className="font_3 text_26">蔓越莓干</span>
-              <span className="font_4 ml-230">{outputBerry}</span>
-            </div>
-            <div className="divider"></div>
-            <div className="flex-row items-center group_9">
-              <span className="font text_28">总计</span>
-              <span className="font_4 ml-244">{sum}</span>
-            </div>
-          </div>
-          <div className="flex-col flex-1 section_6 ml-35">
-            <div className="flex-row justify-between self-stretch">
-              <span className="font_2">制作过程</span>
-              <span className="font_2 text_10">用时约XX分钟</span>
-            </div>
-            <span className="self-start font_3 text_13">1.软化黄油，在黄油中加入细砂糖，搅打至黄油微微变白。</span>
-            <span className="self-start font_3 text_15">2.加入蛋白液，搅打至完全乳化。</span>
-            <span className="self-start font_3 text_17">3. 加入低筋面粉，充分搅拌。</span>
-            <span className="self-start font_3 text_20">4. 蔓越莓干切碎，加入面条。</span>
-            <span className="self-start font_3 text_22">5.将面团放入铺有保鲜膜的模具中塑形。</span>
-            <span className="self-start font_3 text_24">6. 将模具和面团放至冰箱，冷冻30分钟至面团变硬。</span>
-            <span className="self-start font_3 text_25">7.取出面团，切成0.5的片状。</span>
-            <span className="self-start font_3 text_27">8.预热烤箱10分钟，烘烤上火160度，下火150度，烘烤约20分钟</span>
-          </div>
-        </div>
-      </div>
-    </div>
+			<div className="flex-col">
+				<div className="flex-row justify-between">
+					<div className="flex-row items-center relative section">
+						<span className="text">BaKing</span>
+						<div className="shrink-0 section_3 view"></div>
+						<span className="font text_2">蔓越莓饼干</span>
+						<div className="shrink-0 section_3 view_2"></div>
+						<span className="font text_3">用户01</span>
+					</div>
+					<div className="flex-row section_2">
+						<div className="section_3 view_3"></div>
+						<div className="ml-96 section_3"></div>
+						<div className="ml-96 section_3"></div>
+					</div>
+				</div>
+				<div className="flex-row group">
+					<span className="font_2 text_4">预期成果</span>
+					<div className="flex-row ml-280">
+						<span className="font_2 text_5">推荐用量（克）</span>
+						<span className="font_2 text_6 ml-175">口味调整</span>
+					</div>
+				</div>
+				<div className="flex-row justify-center group_2">
+					<div className="flex-col justify-start items-center relative image-wrapper">
+						<img className="image"
+							src={image} alt="Predicted Outcome"/>
+					</div>
+					<div className="flex-col relative section_4 ml-19">
+						<div className="flex-row items-baseline self-stretch">
+							<span className="font_3 text_7">黄油</span>
+							<div className="selector_1">
+								<div>
+									<button onClick={handleOilDecrement}>-</button>
+									<input type="number" id="quantity1" class="value" value={inputOil} onChange={handleOilChange}/>
+									<button onClick={handleOilIncrement}>+</button>
+								</div>
+							</div>
+							<span className="font_4 text_8 ml-119">左右</span>
+						</div>
+						<div className="mt-24 flex-row items-baseline self-stretch">
+							<span className="font_5 text_10">细砂糖</span>
+							<div className="selector_2">
+								<div>
+									<button onClick={handleSugarDecrement}>-</button>
+									<input type="number" id="quantity2" class="value" value={inputSugar} onChange={handleSugarChange}/>
+									<button onClick={handleSugarIncrement}>+</button>
+								</div>
+							</div>
+							<span className="font_4 text_11 ml-120">上限</span>
+						</div>
+						<div className="mt-24 flex-row items-baseline self-stretch">
+							<span className="font_5 text_35">蛋白液</span>
+							<div className="selector_3">
+								<div>
+									<span id="quantity3" className="value">{outputLiquid}</span>
+								</div>
+							</div>
+							<span className="font_4 text_12 ml-120">下限</span>
+						</div>
+						<div className="mt-24 flex-row items-baseline self-stretch">
+							<span className="font_3 text_14">低筋面粉</span>
+							<div className="selector_4">
+								<div>
+									<span id="quantity4" class="value">{outputFlour}</span>
+								</div>
+							</div>
+							<span className="font_4 text_17 ml-120">上限</span>
+						</div>
+						<div className="mt-24 flex-row items-baseline self-stretch">
+							<span className="font_3 text_18">蔓越莓干</span>
+							<div className="selector_5">
+								<div>
+									<span id="quantity5" className="value">{outputBerry}</span>
+								</div>
+							</div>
+							<span className="font_4 text_19 ml-119">左右</span>
+						</div>
+						<span className="mt-24 self-start font_2 text_21">总计</span>
+						<div className="total">
+							<span id="sum" className="text_34">{sum}</span>
+						</div>
+					</div>
+					<div className="flex-col section_5 ml-19">
+						<div className="flex-col">
+							<span className="self-start font_4 text_9">甜度</span>
+							<div className="slidecontainer1">
+								<input type="range" min="1" max="6" value={sweetnessValue} className="slider" id="myRange" onChange={(e) => handleTasteChange(e, setSweetnessValue)}/>
+							</div>
+							<div className="flex-row self-stretch group_3 mt-17">
+								<span className="font_4 text_31">淡</span>
+								<span className="font_4 ml-339 text_32">甜</span>
+							</div>
+						</div>
+						<div className="mt-44 flex-col">
+							<span className="self-start font_4 text_13">口感</span>
+							<div className="slidecontainer2">
+								<input type="range" min="1" max="6" value={textureValue} class="slider" id="myRange" onChange={(e) => handleTasteChange(e, setTextureValue)}/>
+							</div>
+							<div className="flex-row self-stretch group_4 mt-17">
+								<span className="font_4 text_15">脆硬</span>
+								<span className="font_4 text_16 ml-306">酥松</span>
+							</div>
+						</div>
+						<div className="mt-44 flex-col">
+							<span className="self-start font_4 text_20">奶香</span>
+							<div className="slidecontainer3">
+								<input type="range" min="1" max="6" value={milkinessValue} class="slider" id="myRange" onChange={(e) => handleTasteChange(e, setMilkinessValue)}/>
+							</div>
+							<div className="flex-row self-stretch group_3 mt-17">
+								<span className="font_4 text_33">淡</span>
+								<span className="font_4 text_22 ml-339">浓</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="mt-30 flex-col">
+				<div className="flex-row justify-between">
+					<span className="font_2 text_23">制作步骤</span>
+					<span className="font_2 text_24">预估热量</span>
+				</div>
+				<div className="flex-row mt-15">
+					<div className="flex-col items-start flex-1 relative section_6">
+						<span className="font_3 text_25">软化黄油，在黄油中加入细砂糖，搅打至黄油微微发白，得到糖油混合物。</span>
+						<span className="font_3 text_26 mt-23">在糖油混合物中加入蛋白液，搅打至完全乳化，得到混合物（A）。</span>
+						<span className="font_3 text_28 mt-23">
+							切碎蔓越莓干，将蔓越莓干碎加入低筋面粉，充分搅拌，得到混合物（B）。
+						</span>
+						<span className="font_3 text_29 mt-23">将（A）和（B）充分混合得到面团，将面团放入铺有保鲜膜的模具塑形。</span>
+						<span className="font_3 mt-23">将塑形后的面团放到冰箱中冷冻30分钟，面团变硬后取出，切成约0.5厘米的薄片。</span>
+						<span className="font_3 mt-23">烤箱预热，上火160度，下火150度，烘烤约20分钟后取出，静置冷却。</span>
+					</div>
+					<div className="flex-col items-center shrink-0 section_7 ml-19">
+						<span className="text_27">{caloriePerGram}</span>
+						<span className="font_3 text_30 mt-31">卡路里/100克</span>
+					</div>
+				</div>
+			</div>
+		</div>
   );
 };
 
