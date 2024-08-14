@@ -23,7 +23,6 @@ class Biscuit {
     this._liquid = liquid;
     this._berry = berry;
     this._total = oil.amount + sugar.amount + flour.amount + liquid.amount;
-    this._num_portion = 0;
   }
 
   update_total() {
@@ -35,8 +34,7 @@ class Biscuit {
   }
 
   // Initialized the amount of each ingredients based on the number of portions
-  plan(num_portion = 1) {
-    this._num_portion = num_portion;
+  plan() {
     this._oil.amount = 110 * num_portion;
     this._flour.amount = 185 * num_portion;
     this._sugar.amount = 80 * num_portion;

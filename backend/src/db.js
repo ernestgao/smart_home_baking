@@ -8,7 +8,7 @@ async function connectDB() {
         await client.connect();
         console.log("Connected to MongoDB");
     } catch (err) {
-        console.error(err);
+        throw err;
     }
 }
 

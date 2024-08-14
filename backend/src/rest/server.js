@@ -3,7 +3,8 @@ import http from "http";
 import cors from "cors";
 import Baker from "../controller/baker.js";
 import Biscuit from "../controller/biscuit.js";
-import { client, connectDB } from "../db.js";
+import mgdb from "../db.js";
+const { client, connectDB } = mgdb;
 import {
   Ingredient,
   Oil,
@@ -101,7 +102,7 @@ class Server {
   registerRoutes() {
     this.express.get("/echo/:msg", Server.echo);
     this.express.get("/login/:user", this.login);
-    this.express.get("/plan/:num_portion", this.plan);
+    this.express.get("/plan", this.plan);
     this.express.post("/modify", this.modify);
     this.express.post("/adjust", this.adjust);
   }
@@ -137,6 +138,7 @@ class Server {
           new Biscuit(oil, flour, sugar, liquid, berry)
         );
         users.insertOne(this._baker);
+        res.status(200);
       }
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -146,8 +148,7 @@ class Server {
   // return amount, tastes, calorie
   plan = (req, res) => {
     try {
-      const { num_portion } = req.params;
-      let amount = this.baker.biscuit.plan(num_portion);
+      let amount = this.baker.biscuit.plan();
       let tastes = this.baker.biscuit.taste_predict();
       let calorie = this.baker.biscuit.caculate_calorie();
       let results = {
