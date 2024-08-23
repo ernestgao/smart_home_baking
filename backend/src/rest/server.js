@@ -4,7 +4,10 @@ import cors from "cors";
 import Baker from "../controller/baker.js";
 import Biscuit from "../controller/biscuit.js";
 import mgdb from "../db.js";
+import connectSerial from "../serialConnection.js";
+import {Server as socketIo} from 'socket.io';
 const { client, connectDB } = mgdb;
+
 import {
   Ingredient,
   Oil,
@@ -21,6 +24,7 @@ class Server {
     this.express = express();
     this.server = undefined;
     this.db = undefined;
+    this.io = null;
     this.baker = null;
     this.registerMiddleware();
     this.registerRoutes();
@@ -44,6 +48,15 @@ class Server {
           await connectDB();
           this.db = client.db("BaKing");
           console.info("Server::start() - Database connected");
+          const serialPortPath = "/dev/cu.usbmodem101";
+          const baudRate = 9600;
+          this.serial = await connectSerial(
+            serialPortPath,
+            baudRate,
+            (data) => {
+              this.sendDataToClients({ weight: data });
+            }
+          );
         } catch (err) {
           console.error(
             `Server::start() - Database connection ERROR: ${err.message}`
@@ -55,7 +68,23 @@ class Server {
           );
           return;
         }
-        this.server = this.express
+        this.server = http.createServer(this.express);
+
+        this.io = new socketIo(this.server, {
+          cors: {
+            methods: ["GET", "POST"],
+            allowedHeaders: ["Content-Type", "ngrok-skip-browser-warning"],
+            credentials: true,
+          }});
+
+        this.io.on('connection', (socket) => {
+          console.info('New client connected');
+          socket.on('disconnect', () => {
+            console.info('Client disconnected');
+          });
+        });
+
+        this.server
           .listen(this.port, () => {
             console.info(
               `Server::start() - server listening on port: ${this.port}`
@@ -69,6 +98,12 @@ class Server {
           });
       }
     });
+  }
+
+  sendDataToClients(data) {
+    if (this.io) {
+      this.io.emit('data', data);
+    }
   }
 
   /**
@@ -101,7 +136,8 @@ class Server {
 
   registerRoutes() {
     this.express.get("/echo/:msg", Server.echo);
-    this.express.get("/login/:user", this.login);
+    this.express.get("/login/:uid", this.login);
+    this.express.get("/display", this.display);
     this.express.get("/plan", this.plan);
     this.express.post("/modify", this.modify);
     this.express.post("/adjust", this.adjust);
@@ -112,17 +148,26 @@ class Server {
     try {
       const { uid } = req.params;
       const users = this.db.collection("Users");
-      const user = await users.findOne({ uid: uid });
+      const user = await users.findOne({ _uid: `${uid}` });
       let oil, flour, sugar, liquid, berry;
       if (user) {
-        oil = new Oil(user.biscuit.oil.name, user.biscuit.oil.amount);
-        flour = new Flour(user.biscuit.flour.name, user.biscuit.flour.amount);
-        sugar = new Sugar(user.biscuit.sugar.name, user.biscuit.sugar.amount);
-        liquid = new Liquid(
-          user.biscuit.liquid.name,
-          user.biscuit.liquid.amount
+        oil = new Oil(user._biscuit._oil._name, user._biscuit._oil._amount);
+        flour = new Flour(
+          user._biscuit._flour._name,
+          user._biscuit._flour._amount
         );
-        berry = new Berry(user.biscuit.berry.name, user.biscuit.berry.amount);
+        sugar = new Sugar(
+          user._biscuit._sugar._name,
+          user._biscuit._sugar._amount
+        );
+        liquid = new Liquid(
+          user._biscuit._liquid._name,
+          user._biscuit._liquid._amount
+        );
+        berry = new Berry(
+          user._biscuit._berry._name,
+          user._biscuit._berry._amount
+        );
         this._baker = new Baker(
           uid,
           new Biscuit(oil, flour, sugar, liquid, berry)
@@ -138,8 +183,24 @@ class Server {
           new Biscuit(oil, flour, sugar, liquid, berry)
         );
         users.insertOne(this._baker);
-        res.status(200);
       }
+      res.status(200).json({ message: "Login successful" });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+
+  display = (req, res) => {
+    try {
+      let amount = this._baker.biscuit.get_amounts();
+      let tastes = this._baker.biscuit.taste_predict();
+      let calorie = this._baker.biscuit.caculate_calorie();
+      let results = {
+        amount: amount,
+        tastes: tastes,
+        calorie: calorie,
+      };
+      res.status(200).json({ uid: this._baker._uid, result: results });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -148,9 +209,9 @@ class Server {
   // return amount, tastes, calorie
   plan = (req, res) => {
     try {
-      let amount = this.baker.biscuit.plan();
-      let tastes = this.baker.biscuit.taste_predict();
-      let calorie = this.baker.biscuit.caculate_calorie();
+      let amount = this._baker.biscuit.plan();
+      let tastes = this._baker.biscuit.taste_predict();
+      let calorie = this._baker.biscuit.caculate_calorie();
       let results = {
         amount: amount,
         tastes: tastes,
@@ -167,9 +228,9 @@ class Server {
       let { sugar, oil } = req.body;
       sugar = parseFloat(sugar);
       oil = parseFloat(oil);
-      let amount = this.baker.biscuit.adjust_amount(sugar, oil);
-      let tastes = this.baker.biscuit.taste_predict();
-      let calorie = this.baker.biscuit.caculate_calorie();
+      let amount = this._baker.biscuit.adjust_amount(sugar, oil);
+      let tastes = this._baker.biscuit.taste_predict();
+      let calorie = this._baker.biscuit.caculate_calorie();
       let results = {
         amount: amount,
         tastes: tastes,
@@ -187,13 +248,13 @@ class Server {
       sweetness = parseInt(sweetness);
       texture = parseInt(texture);
       milkiness = parseInt(milkiness);
-      let amount = this.baker.biscuit.adjust_portion(sweetness, texture);
+      let amount = this._baker.biscuit.adjust_portion(sweetness, texture);
       let tastes = {
         sweetness: sweetness,
         texture: texture,
         milkiness: milkiness,
       };
-      let calorie = this.baker.biscuit.caculate_calorie();
+      let calorie = this._baker.biscuit.caculate_calorie();
       let results = {
         amount: amount,
         tastes: tastes,

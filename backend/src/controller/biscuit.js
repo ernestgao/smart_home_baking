@@ -34,7 +34,7 @@ class Biscuit {
   }
 
   // Initialized the amount of each ingredients based on the number of portions
-  plan() {
+  plan(num_portion = 1) {
     this._oil.amount = 110 * num_portion;
     this._flour.amount = 185 * num_portion;
     this._sugar.amount = 80 * num_portion;
@@ -74,6 +74,13 @@ class Biscuit {
   // texture: 6 -> fluffy, 1 -> crunchy
   // milk: 6 -> light, 1 -> strong
   taste_predict() {
+    if (this._total == 0) {
+      return {
+        sweetness: 1,
+        texture: 1,
+        milkiness: 1,
+      }
+    }
     let sweet, texture, milk;
     sweet = this.get_scale(
       (this._sugar.amount / this._total).toFixed(3),
@@ -164,6 +171,9 @@ class Biscuit {
 
   // Calculate the total calories of the cookie
   caculate_calorie() {
+    if (this._total == 0) {
+      return 0;
+    }
     return parseInt(
       this._sugar.amount * Biscuit.sugar_calorie +
         this._oil.amount * Biscuit.oil_calorie +
