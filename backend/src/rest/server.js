@@ -5,7 +5,8 @@ import Baker from "../controller/baker.js";
 import Biscuit from "../controller/biscuit.js";
 import mgdb from "../db.js";
 import connectSerial from "../serialConnection.js";
-import {Server as socketIo} from 'socket.io';
+import axios from "axios";
+import { Server as socketIo } from "socket.io";
 const { client, connectDB } = mgdb;
 
 import {
@@ -75,12 +76,13 @@ class Server {
             methods: ["GET", "POST"],
             allowedHeaders: ["Content-Type", "ngrok-skip-browser-warning"],
             credentials: true,
-          }});
+          },
+        });
 
-        this.io.on('connection', (socket) => {
-          console.info('New client connected');
-          socket.on('disconnect', () => {
-            console.info('Client disconnected');
+        this.io.on("connection", (socket) => {
+          console.info("New client connected");
+          socket.on("disconnect", () => {
+            console.info("Client disconnected");
           });
         });
 
@@ -102,7 +104,7 @@ class Server {
 
   sendDataToClients(data) {
     if (this.io) {
-      this.io.emit('data', data);
+      this.io.emit("data", data);
     }
   }
 
@@ -141,6 +143,7 @@ class Server {
     this.express.get("/plan", this.plan);
     this.express.post("/modify", this.modify);
     this.express.post("/adjust", this.adjust);
+    this.express.post("/voice-command", this.handleVoice);
   }
 
   // user login
@@ -182,6 +185,7 @@ class Server {
           uid,
           new Biscuit(oil, flour, sugar, liquid, berry)
         );
+        this._baker._biscuit.plan();
         users.insertOne(this._baker);
       }
       res.status(200).json({ message: "Login successful" });
@@ -263,6 +267,90 @@ class Server {
       res.status(200).json({ result: results });
     } catch (error) {
       res.status(400).json({ error: error.message });
+    }
+  };
+
+  handleVoice = async (req, res) => {
+    const apiKey = "5f7846f0daba4259abc28c62a727de1f";
+    const apiEndpoint =
+      "https://baking-yummy.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-08-01-preview";
+
+    const userMessage = req.body.message;
+    const senderId = req.body.sender || "default";
+
+    try {
+      // Send message to Rasa
+      const rasaResponse = await axios.post(
+        `http://127.0.0.1:5005/webhooks/rest/webhook`,
+        {
+          sender: senderId,
+          message: userMessage,
+        }
+      );
+      
+      // Process Rasa's response
+      let botMessages = "";
+      let commands = [];  // Collect command-based responses
+
+      rasaResponse.data.forEach((response) => {
+        // Check if response is a command response (based on "is_command": true)
+        if (response.custom && response.custom.is_command) {
+          commands.push({
+            command: response.custom.command,
+            parameters: response.custom.parameters
+          });
+          botMessages += (response.custom.message || "") + "\n";
+        } else {
+          // Collect regular messages
+          botMessages += (response.text || "") + "\n";
+        }
+      });
+
+      botMessages = botMessages.trim(); // Clean up any trailing newline characters
+
+      if (botMessages == "No Response") {
+        try {
+          // Send request to Azure OpenAI
+          const OpenAIresponse = await axios.post(
+            apiEndpoint,
+            {
+              messages: [
+                {
+                  role: "system",
+                  content:
+                    'Your name is Yummy and you are an AI assistant in Chinese that assist users in baking cranberry cookie. Kindly provide response in Chinese within 100 chinese characters limit. Only answer questions related to cranberry cookie and the baking procedure, otherwise respond "对不起我无法回答". If the user asks you to operate the application or system commands, respond "对不起我无法操作".',
+                },
+                { role: "user", content: userMessage },
+              ],
+              max_tokens: 200,
+              temperature: 0.7,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "api-key": apiKey,
+              },
+            }
+          );
+          botMessages = OpenAIresponse.data.choices[0].message.content;
+        } catch (error) {
+          console.error("Error communicating with Azure OpenAI:",error.message);
+          if (!res.headersSent) {
+            return res.status(500).json({ error: "Failed to communicate with Azure OpenAI" });
+          }
+        }
+      }
+      if (!res.headersSent) {
+        return res.json({ 
+          messages: botMessages || null,
+          commands: commands.length > 0 ? commands : null
+         });
+      }
+    } catch (error) {
+      console.error("Error communicating with Rasa:", error);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Failed to communicate with Rasa server." });
+      }
     }
   };
 

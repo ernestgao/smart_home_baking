@@ -1,0 +1,269 @@
+version: "3.1"
+stories:
+  - story: How to soften butter
+    steps:
+      - intent: 软化黄油
+      - action: utter_软化黄油
+
+  - story: How to tell if butter is softened
+    steps:
+      - intent: 软化成功
+      - action: utter_软化成功
+
+  - story: How to beat butter
+    steps:
+      - intent: 搅打黄油
+      - action: utter_搅打黄油
+
+  - story: Why soften butter
+    steps:
+      - intent: 软化黄油原因
+      - action: utter_软化黄油原因
+
+  - story: Why use fine sugar
+    steps:
+      - intent: 细砂糖选择原因
+      - action: utter_细砂糖选择原因
+
+  - story: Importance of beating butter
+    steps:
+      - intent: 打发黄油重要性
+      - action: utter_打发黄油重要性
+
+  - story: How to check if butter is whipped enough
+    steps:
+      - intent: 黄油打发程度
+      - action: utter_黄油打发程度
+
+  - story: How to install an electric mixer
+    steps:
+      - intent: 电动打蛋器安装
+      - action: utter_电动打蛋器安装
+
+  - story: Why use egg whites only
+    steps:
+      - intent: 蛋白液作用
+      - action: utter_蛋白液作用
+
+  - story: How to use an egg separator
+    steps:
+      - intent: 蛋液分离器使用
+      - action: utter_蛋液分离器使用
+
+  - story: How to check if mixture is fully emulsified
+    steps:
+      - intent: 完全乳化标准
+      - action: utter_完全乳化标准
+
+  - story: How to cut dried cranberries
+    steps:
+      - intent: 切蔓越莓干
+      - action: utter_切蔓越莓干
+
+  - story: How finely to chop dried cranberries
+    steps:
+      - intent: 蔓越莓干大小
+      - action: utter_蔓越莓干大小
+
+  - story: How to stir cranberries and flour
+    steps:
+      - intent: 搅拌蔓越莓干
+      - action: utter_搅拌蔓越莓干
+
+  - story: How to use the cross-stirring method
+    steps:
+      - intent: 十字拌和法
+      - action: utter_十字拌和法
+
+  - story: How to lay plastic wrap
+    steps:
+      - intent: 铺保鲜膜
+      - action: utter_铺保鲜膜
+
+  - story: How to place dough in the mold
+    steps:
+      - intent: 放面团
+      - action: utter_放面团
+
+  - story: How to shape dough
+    steps:
+      - intent: 塑形面团
+      - action: utter_塑形面团
+
+  - story: Why freeze dough
+    steps:
+      - intent: 冷冻面团
+      - action: utter_冷冻面团
+
+  - story: Check Thickness
+    steps:
+    - intent: 厚度
+    - action: utter_厚度
+
+  - story: Handle Thin Dough
+    steps:
+    - intent: 太薄
+    - action: utter_太薄
+
+  - story: Handle Thick Dough
+    steps:
+    - intent: 太厚
+    - action: utter_太厚
+
+  - story: Freeze with Mold
+    steps:
+    - intent: 模具冷冻
+    - action: utter_模具冷冻
+
+  - story: Cold Storage vs Freezing
+    steps:
+    - intent: 冷藏还是冷冻
+    - action: utter_冷藏还是冷冻
+
+  - story: How to Use Parchment Paper
+    steps:
+    - intent: 铺油纸
+    - action: utter_铺油纸
+
+  - story: How to space cookies on the tray
+    steps:
+      - intent: 饼干间距
+      - action: utter_饼干间距
+
+  - story: How to preheat oven
+    steps:
+      - intent: 预热烤箱
+      - action: utter_预热烤箱
+
+  - story: Too many cookies
+    steps:
+      - intent: 饼干太多
+      - action: utter_饼干太多
+
+  - story: What happens if cookies are baked too long
+    steps:
+      - intent: 饼干烘烤时间长
+      - action: utter_饼干烘烤时间长
+
+  - story: What happens if cookies are underbaked
+    steps:
+      - intent: 饼干烘烤时间短
+      - action: utter_饼干烘烤时间短
+
+  - story: Section 1 - Softening Butter
+    steps:
+      - intent: 软化黄油
+      - action: utter_软化黄油
+      - intent: 软化成功
+      - action: utter_软化成功
+      - intent: 搅打黄油
+      - action: utter_搅打黄油
+      - intent: 软化黄油原因
+      - action: utter_软化黄油原因
+      - intent: 细砂糖选择原因
+      - action: utter_细砂糖选择原因
+      - intent: 打发黄油重要性
+      - action: utter_打发黄油重要性
+      - intent: 黄油打发程度
+      - action: utter_黄油打发程度
+      - intent: 电动打蛋器安装
+      - action: utter_电动打蛋器安装
+
+  - story: Section 2 - Egg White and Emulsifying
+    steps:
+      - intent: 蛋白液作用
+      - action: utter_蛋白液作用
+      - intent: 蛋液分离器使用
+      - action: utter_蛋液分离器使用
+      - intent: 完全乳化标准
+      - action: utter_完全乳化标准
+
+  - story: Section 3 - Chopping Cranberries
+    steps:
+      - intent: 切蔓越莓干
+      - action: utter_切蔓越莓干
+      - intent: 蔓越莓干大小
+      - action: utter_蔓越莓干大小
+      - intent: 搅拌蔓越莓干
+      - action: utter_搅拌蔓越莓干
+
+  - story: Section 4 - Mixing and Shaping Dough
+    steps:
+      - intent: 十字拌和法
+      - action: utter_十字拌和法
+      - intent: 铺保鲜膜
+      - action: utter_铺保鲜膜
+      - intent: 放面团
+      - action: utter_放面团
+      - intent: 塑形面团
+      - action: utter_塑形面团
+
+  - story: Section 5 - Freezing and Preparing for Baking
+    steps:
+      - intent: 冷冻面团
+      - action: utter_冷冻面团
+      - intent: 厚度
+      - action: utter_厚度
+      - intent: 太薄
+      - action: utter_太薄
+      - intent: 太厚
+      - action: utter_太厚
+      - intent: 模具冷冻
+      - action: utter_模具冷冻
+      - intent: 冷藏还是冷冻
+      - action: utter_冷藏还是冷冻
+      - intent: 铺油纸
+      - action: utter_铺油纸
+      - intent: 饼干间距
+      - action: utter_饼干间距
+
+  - story: Section 6 - Baking Process
+    steps:
+      - intent: 预热烤箱
+      - action: utter_预热烤箱
+      - intent: 饼干太多
+      - action: utter_饼干太多
+      - intent: 饼干烘烤时间长
+      - action: utter_饼干烘烤时间长
+      - intent: 饼干烘烤时间短
+      - action: utter_饼干烘烤时间短
+
+  - story: Set Timer Story
+    steps:
+      - intent: 计时
+      - action: action_handle_command
+
+  - story: Calibrate Story
+    steps:
+      - intent: 去皮
+      - action: action_handle_command
+
+  - story: Describe 第一步
+    steps:
+      - intent: 第一步
+      - action: utter_第一步
+
+  - story: Describe 第二步
+    steps:
+      - intent: 第二步
+      - action: utter_第二步
+
+  - story: Describe 第三步
+    steps:
+      - intent: 第三步
+      - action: utter_第三步
+
+  - story: Describe 第四步
+    steps:
+      - intent: 第四步
+      - action: utter_第四步
+
+  - story: Describe 第五步
+    steps:
+      - intent: 第五步
+      - action: utter_第五步
+
+  - story: Describe 第六步
+    steps:
+      - intent: 第六步
+      - action: utter_第六步

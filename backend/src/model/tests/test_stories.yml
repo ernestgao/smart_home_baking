@@ -1,0 +1,102 @@
+stories:
+  - story: Test Story 1 - Softening Butter
+    steps:
+    - user: |
+        怎么样软化黄油？
+      intent: 软化黄油
+    - action: utter_软化黄油
+    - user: |
+        黄油怎样才算软化成功？
+      intent: 软化成功
+    - action: utter_软化成功
+    - user: |
+        如何搅打黄油？
+      intent: 搅打黄油
+    - action: utter_搅打黄油
+    - user: |
+        为什么要软化黄油？
+      intent: 软化黄油原因
+    - action: utter_软化黄油原因
+    - user: |
+        为什么加细砂糖不加棉白糖？
+      intent: 细砂糖选择原因
+    - action: utter_细砂糖选择原因
+
+  - story: Test Story 2 - Egg White and Emulsifying
+    steps:
+    - user: |
+        为什么只加入蛋白液？
+      intent: 蛋白液作用
+    - action: utter_蛋白液作用
+    - user: |
+        如何使用蛋液分离器？
+      intent: 蛋液分离器使用
+    - action: utter_蛋液分离器使用
+    - user: |
+        怎样才算完全乳化？
+      intent: 完全乳化标准
+    - action: utter_完全乳化标准
+    - user: |
+        黄油怎么打发？
+      intent: 搅打黄油
+    - action: utter_搅打黄油
+
+  - story: Test Story 3 - Chopping Cranberries
+    steps:
+    - user: |
+        如何切蔓越莓干？
+      intent: 切蔓越莓干
+    - action: utter_切蔓越莓干
+    - user: |
+        蔓越莓干切多碎？
+      intent: 蔓越莓干大小
+    - action: utter_蔓越莓干大小
+    - user: |
+        怎么搅拌蔓越莓干？
+      intent: 搅拌蔓越莓干
+    - action: utter_搅拌蔓越莓干
+
+  - story: Test Story 4 - Mixing and Shaping Dough
+    steps:
+    - user: |
+        用什么工具搅拌面团？
+      intent: 十字拌和法
+    - action: utter_十字拌和法
+    - user: |
+        如何铺保鲜膜？
+      intent: 铺保鲜膜
+    - action: utter_铺保鲜膜
+    - user: |
+        怎样把面团放入模具？
+      intent: 放面团
+    - action: utter_放面团
+    - user: |
+        为什么要冷冻面团？
+      intent: 冷冻面团
+    - action: utter_冷冻面团
+
+  - story: Test Story 5 - Freezing and Preparing for Baking
+    steps:
+    - user: |
+        可以连同模具一起冷冻吗？
+      intent: 冷冻面团
+    - action: utter_冷冻面团
+    - user: |
+        饼干中间需要隔多远？
+      intent: 饼干间距
+    - action: utter_饼干间距
+
+  - story: Test Story 6 - Baking Process
+    steps:
+    - user: |
+        烤箱怎么预热？
+      intent: 预热烤箱
+    - action: utter_预热烤箱
+    - user: |
+        饼干烘烤时间过长会怎样？
+      intent: 饼干烘烤时间长
+    - action: utter_饼干烘烤时间长
+    - user: |
+        饼干烘烤时间不足会怎样？
+      intent: 饼干烘烤时间短
+    - action: utter_饼干烘烤时间短
