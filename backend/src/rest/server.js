@@ -49,7 +49,7 @@ class Server {
           await connectDB();
           this.db = client.db("BaKing");
           console.info("Server::start() - Database connected");
-          const serialPortPath = "/dev/cu.usbmodem101";
+          const serialPortPath = "/dev/cu.usbmodem101"; //根据电脑更改接口地址
           const baudRate = 9600;
           this.serial = await connectSerial(
             serialPortPath,
@@ -104,6 +104,7 @@ class Server {
 
   sendDataToClients(data) {
     if (this.io) {
+      // console.log(data);
       this.io.emit("data", data);
     }
   }
@@ -300,6 +301,20 @@ class Server {
             parameters: response.custom.parameters
           });
           botMessages += (response.custom.message || "") + "\n";
+          if (response.custom.command === "去皮") {
+            // Send tare command to the Arduino
+            if (this.serial && this.serial.isOpen) {
+              this.serial.write("TARE\n", (err) => {
+                if (err) {
+                  console.error("Error sending tare command to Arduino:", err);
+                } else {
+                  console.info("Tare command sent to Arduino.");
+                }
+              });
+            } else {
+              console.error("Serial connection not open. Cannot send tare command.");
+            }
+          }
         } else {
           // Collect regular messages
           botMessages += (response.text || "") + "\n";

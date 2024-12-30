@@ -228,11 +228,6 @@ stories:
       - intent: 饼干烘烤时间短
       - action: utter_饼干烘烤时间短
 
-  - story: Set Timer Story
-    steps:
-      - intent: 计时
-      - action: action_handle_command
-
   - story: Calibrate Story
     steps:
       - intent: 去皮
@@ -267,3 +262,163 @@ stories:
     steps:
       - intent: 第六步
       - action: utter_第六步
+
+  - story: Describe 询问混合物A
+    steps:
+      - intent: 询问混合物A
+      - action: utter_询问混合物A
+
+  - story: Describe 询问混合物B
+    steps:
+      - intent: 询问混合物B
+      - action: utter_询问混合物B
+
+  - story: First Story
+    steps:
+      - intent: 跳转第一个页面
+      - action: action_handle_command    
+
+  - story: First third Story
+    steps:
+      - intent: 跳转第三个页面
+      - action: action_handle_command   
+
+  - story: Second Story
+    steps:
+      - intent: 回到上一步
+      - action: action_handle_command 
+
+  - story: Second next Story
+    steps:
+      - intent: 回到下一步
+      - action: action_handle_command 
+
+  - story: Third Story
+    steps:
+      - intent: 增加低筋面粉
+      - action: action_handle_command 
+
+  - story: Fourth Story
+    steps:
+      - intent: 称量低筋面粉
+      - action: action_handle_command 
+
+  - story: Fifth Story
+    steps:
+      - intent: 步骤跳转
+      - action: action_handle_command 
+
+  - story: Sixth Story
+    steps:
+      - intent: 减少低筋面粉
+      - action: action_handle_command 
+
+  - story: Seventh Story
+    steps:
+      - intent: 称量黄油
+      - action: action_handle_command     
+
+  - story: Eighth Story
+    steps:
+      - intent: 增加黄油
+      - action: action_handle_command    
+
+  - story: Ninth Story
+    steps:
+      - intent: 减少黄油
+      - action: action_handle_command  
+
+  - story: Tenth Story
+    steps:
+      - intent: 称量白砂糖
+      - action: action_handle_command          
+
+  - story: Eleventh Story
+    steps:
+      - intent: 增加白砂糖
+      - action: action_handle_command   
+
+  - story: Twelfth Story
+    steps:
+      - intent: 减少白砂糖
+      - action: action_handle_command         
+
+  - story: Thirteenth Story
+    steps:
+      - intent: 称量蛋白液
+      - action: action_handle_command          
+
+  - story: Fourteenth Story
+    steps:
+      - intent: 增加蛋白液
+      - action: action_handle_command   
+
+  - story: Fifteenth Story
+    steps:
+      - intent: 减少蛋白液
+      - action: action_handle_command        
+
+  - story: Tenth Story
+    steps:
+      - intent: 称量白砂糖
+      - action: action_handle_command          
+
+  - story: Eleventh Story
+    steps:
+      - intent: 增加白砂糖
+      - action: action_handle_command   
+
+  - story: Twelfth Story
+    steps:
+      - intent: 减少白砂糖
+      - action: action_handle_command        
+
+   - story: Thirteenth Story
+    steps:
+      - intent: 称量蔓越莓干
+      - action: action_handle_command          
+
+  - story: Fourteenth Story
+    steps:
+      - intent: 增加蔓越莓干
+      - action: action_handle_command   
+
+  - story: Fifteenth Story
+    steps:
+      - intent: 减少蔓越莓干
+      - action: action_handle_command     
+
+  - story: Set Timer Story
+    steps:
+      - intent: 设置时长
+      - action: action_handle_command
+
+  - story: Start Timer Story
+    steps:
+      - intent: 开始计时
+      - action: action_handle_command
+
+  - story: Pause Timer Story
+    steps:
+      - intent: 暂停计时
+      - action: action_handle_command
+
+  - story: Resume Timer Story
+    steps:
+      - intent: 恢复计时
+      - action: action_handle_command
+
+  - story: Reset Timer Story
+    steps:
+      - intent: 重置计时
+      - action: action_handle_command
+  
+  - story: Add Timer Story
+    steps:
+      - intent: 增加计时
+      - action: action_handle_command
+
+  - story: Minus Timer Story
+    steps:
+      - intent: 减少计时
+      - action: action_handle_command

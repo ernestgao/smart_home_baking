@@ -35,7 +35,6 @@ intents:
   - 饼干太多
   - 饼干烘烤时间长
   - 饼干烘烤时间短
-  - 计时
   - 去皮
   - 第一步
   - 第二步
@@ -43,9 +42,39 @@ intents:
   - 第四步
   - 第五步
   - 第六步
-
+  - 询问混合物A
+  - 询问混合物B
+  - 回到上一步
+  - 回到下一步
+  - 步骤跳转
+  - 跳转第一个页面
+  - 跳转第三个页面
+  - 增加低筋面粉
+  - 称量低筋面粉
+  - 减少低筋面粉
+  - 称量黄油
+  - 增加黄油
+  - 减少黄油
+  - 称量白砂糖
+  - 增加白砂糖
+  - 减少白砂糖
+  - 称量蛋白液
+  - 增加蛋白液
+  - 减少蛋白液
+  - 称量蔓越莓干
+  - 增加蔓越莓干
+  - 减少蔓越莓干
+  - 设置时长
+  - 开始计时
+  - 暂停计时
+  - 恢复计时
+  - 重置计时
+  - 增加计时
+  - 减少计时
 entities:
   - time
+  - step
+  - weight
 
 slots:
   time:
@@ -53,6 +82,18 @@ slots:
     mappings:
       - type: from_entity
         entity: time
+
+  step:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: step
+
+  weight:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: weight
 
 responses:
   utter_软化黄油:
@@ -165,6 +206,12 @@ responses:
 
   utter_第六步:
     - text: "第六步是：烤箱预热，上火160度，下火150度。铺油纸，摆好饼干。烘烤约20分钟取出，静置冷却。"
+
+  utter_询问混合物A:
+    - text: "混合物（A）是糖、油和蛋白液的混合物。"
+
+  utter_询问混合物B:
+    - text: "混合物（B）是蔓越莓干和低筋面粉的混合物。"
 
   utter_default:
     - text: "No Response"

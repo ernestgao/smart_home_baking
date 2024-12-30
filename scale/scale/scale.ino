@@ -36,8 +36,19 @@ void setup() {
 
 void loop() {
   if (button.getSingleDebouncedPress()){
-    Serial.println("tare...");
+    Serial.println("Button pressed for tare...");
     scale.tare();
+  }
+
+    if (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n');
+    command.trim(); // Remove any whitespace or newline characters
+    if (command.equalsIgnoreCase("TARE")) {
+      Serial.println("Serial command received: TARE");
+      scale.tare();
+    } else {
+      Serial.println("Unknown command received");
+    }
   }
   
   if (scale.wait_ready_timeout(200)) {
