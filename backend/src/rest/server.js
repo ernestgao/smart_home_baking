@@ -104,7 +104,7 @@ class Server {
 
   sendDataToClients(data) {
     if (this.io) {
-      // console.log(data);
+      console.log(`scale value read: ${data.weight}`);
       this.io.emit("data", data);
     }
   }
@@ -145,6 +145,7 @@ class Server {
     this.express.post("/modify", this.modify);
     this.express.post("/adjust", this.adjust);
     this.express.post("/voice-command", this.handleVoice);
+    this.express.post("/save-actual", this.saveActual)
   }
 
   // user login
@@ -291,15 +292,15 @@ class Server {
       
       // Process Rasa's response
       let botMessages = "";
-      let commands = [];  // Collect command-based responses
+      let commands = null;  // Collect command-based responses
 
       rasaResponse.data.forEach((response) => {
         // Check if response is a command response (based on "is_command": true)
         if (response.custom && response.custom.is_command) {
-          commands.push({
+          commands = {
             command: response.custom.command,
             parameters: response.custom.parameters
-          });
+          };
           botMessages += (response.custom.message || "") + "\n";
           if (response.custom.command === "去皮") {
             // Send tare command to the Arduino
@@ -356,9 +357,11 @@ class Server {
         }
       }
       if (!res.headersSent) {
+        console.log(botMessages);
+        console.log(commands);
         return res.json({ 
           messages: botMessages || null,
-          commands: commands.length > 0 ? commands : null
+          commands: commands
          });
       }
     } catch (error) {
@@ -368,6 +371,43 @@ class Server {
       }
     }
   };
+
+  saveActual = async (req, res) => {
+    try {
+      const { uid, actualAmounts } = req.body;
+  
+      const collection = this.db.collection("Users");
+  
+      // Find the user and update the actual amounts of ingredients
+      const result = await collection.updateOne(
+        { _uid: uid }, // Match user by unique ID
+        {
+          $set: {
+            "_biscuit._oil._amount": actualAmounts.oil || 0,
+            "_biscuit._flour._amount": actualAmounts.flour || 0,
+            "_biscuit._sugar._amount": actualAmounts.sugar || 0,
+            "_biscuit._liquid._amount": actualAmounts.liquid || 0,
+            "_biscuit._berry._amount": actualAmounts.berry || 0,
+            "_biscuit._total": actualAmounts.berry+actualAmounts.liquid+actualAmounts.sugar+actualAmounts.flour+actualAmounts.oil || 0,
+          },
+        }
+      );
+  
+      if (result.modifiedCount > 0 || result.upsertedCount > 0) {
+        this._baker._biscuit._oil.amount = actualAmounts.oil;
+        this._baker._biscuit._flour.amount = actualAmounts.flour;
+        this._baker._biscuit._sugar.amount = actualAmounts.sugar;
+        this._baker._biscuit._berry.amount = actualAmounts.berry;
+        this._baker._biscuit._liquid.amount = actualAmounts.liquid;
+        res.status(200).json({ message: "Actual amounts updated successfully" });
+      } else {
+        res.status(404).json({ message: "User not found or no changes made" });
+      }
+    } catch (error) {
+      console.error("Error updating actual amounts:", error);
+      res.status(500).json({ error: "Failed to update actual amounts" });
+    }
+  }
 
   static echo(req, res) {
     try {

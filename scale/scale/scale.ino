@@ -40,7 +40,7 @@ void loop() {
     scale.tare();
   }
 
-    if (Serial.available() > 0) {
+  if (Serial.available() > 0) {
     String command = Serial.readStringUntil('\n');
     command.trim(); // Remove any whitespace or newline characters
     if (command.equalsIgnoreCase("TARE")) {

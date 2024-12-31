@@ -373,7 +373,7 @@ stories:
       - intent: 减少白砂糖
       - action: action_handle_command        
 
-   - story: Thirteenth Story
+  - story: Thirteenth Story
     steps:
       - intent: 称量蔓越莓干
       - action: action_handle_command          
