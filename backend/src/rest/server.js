@@ -363,8 +363,6 @@ class Server {
         }
       }
       if (!res.headersSent) {
-        console.log(mediaUrl);
-        console.log(mediaType);
         return res.json({ 
           messages: botMessages || null,
           commands: commands,
