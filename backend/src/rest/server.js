@@ -293,6 +293,8 @@ class Server {
       // Process Rasa's response
       let botMessages = "";
       let commands = null;  // Collect command-based responses
+      let mediaUrl = null;
+      let mediaType = null;
 
       rasaResponse.data.forEach((response) => {
         // Check if response is a command response (based on "is_command": true)
@@ -319,6 +321,10 @@ class Server {
         } else {
           // Collect regular messages
           botMessages += (response.text || "") + "\n";
+          if (response.custom && response.custom.media_url && response.custom.media_type) {
+            mediaUrl = response.custom.media_url;
+            mediaType = response.custom.media_type;
+          }
         }
       });
 
@@ -357,11 +363,13 @@ class Server {
         }
       }
       if (!res.headersSent) {
-        console.log(botMessages);
-        console.log(commands);
+        console.log(mediaUrl);
+        console.log(mediaType);
         return res.json({ 
           messages: botMessages || null,
-          commands: commands
+          commands: commands,
+          mediaUrl: mediaUrl,
+          mediaType: mediaType
          });
       }
     } catch (error) {

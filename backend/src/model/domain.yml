@@ -98,9 +98,16 @@ slots:
 responses:
   utter_软化黄油:
     - text: "切块隔水软化：将黄油切成小块，放入一个小碗中，然后将碗放入50度左右的温水中。确保水不要太热，不烫手就刚好，避免黄油融化。请看示意图。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/1-1.jpeg"
+        media_type: "image"
+
 
   utter_软化成功:
     - text: "按压测试：用手指轻轻按压黄油，或使用搅拌棒轻压黄油，可以基本无阻力的插入，且黄油保持一定形态，黄油就软化完成了。请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/1-2.mp4"
+        media_type: "video"
 
   utter_搅打黄油:
     - text: "电动打蛋器打发黄油：首先安装好电动打蛋器，然后向上推按钮，至低速档或中速档进行打发。"
@@ -116,45 +123,81 @@ responses:
 
   utter_黄油打发程度:
     - text: "请看对比图。如果达到图上的这种程度，黄油和白砂糖充分混合，且微微发白，黄油就搅打好了。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/1-7.jpeg"
+        media_type: "image"
 
   utter_电动打蛋器安装:
     - text: "请看示意图。电动打蛋器分公母头，请将六边形的一头插在左边画有六边形图案的插口下方，请将圆形的插头插在右边有圆形图案的插口下方。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/1-8.jpeg"
+        media_type: "image"
 
   utter_蛋白液作用:
     - text: "因为蔓越莓饼干是水果风味的饼干，加入蛋白液能够突出水果的风味。烤出的饼干颜色也较为明艳。"
 
   utter_蛋液分离器使用:
-    - text: "确保蛋液分离器和盛取蛋液的小碗无水切干净，轻轻敲开鸡蛋，将蛋放在分离器上，让蛋白流过外围的缝隙滴入容器。"
+    - text: "确保蛋液分离器和盛取蛋液的小碗无水切干净，轻轻敲开鸡蛋，将蛋放在分离器上，让蛋白流过外围的缝隙滴入容器，然后小心移动分离器，使蛋黄留在分离器中，最后将蛋黄放入另一个容器。请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/2-2.mp4"
+        media_type: "video"
 
   utter_完全乳化标准:
     - text: "请看对比图。如果达到图上的这种程度，糖油混合物和蛋液充分混合，体积微微膨胀且颜色发白，就乳化好了。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/2-3.jpeg"
+        media_type: "image"
 
   utter_切蔓越莓干:
     - text: "请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/3-1.mp4"
+        media_type: "video"
 
   utter_蔓越莓干大小:
     - text: "请看示意图。将蔓越莓干切成小颗粒即可。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/3-2.jpeg"
+        media_type: "image"
 
   utter_搅拌蔓越莓干:
     - text: "用刮刀轻搅，将蔓越莓干与面粉充分混合即可。请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/3-3.mp4"
+        media_type: "video"
 
   utter_十字拌和法:
-    - text: "您需要用十字拌和法，像炒菜一样，用刮刀边搅拌，边按压，这样很快就可以充分混合面粉和糖油混合物。"
+    - text: "您需要用十字拌和法，像炒菜一样，用刮刀边搅拌，边按压，这样很快就可以充分混合面粉和糖油混合物，得到面团。请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/4-1.mp4"
+        media_type: "video"
 
   utter_铺保鲜膜:
     - text: "由于模具较长，请将保鲜膜横拉出后截断，铺设在模具上。请看示意图。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/4-2.jpeg"
+        media_type: "image"
 
   utter_放面团:
     - text: "用刮刀从容器中取适量面团，依次放入模具，然后抹平。请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/4-3.mp4"
+        media_type: "video"
 
   utter_塑形面团:
     - text: "将模具中的面团压紧实，两头压平。 请看视频。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/4-4.mp4"
+        media_type: "video"
 
   utter_冷冻面团:
     - text: "冷冻面团是为了固定形状、便于切割、控制膨胀、防止过度混合和提高烘焙质量。"
 
   utter_厚度:
     - text: "5毫米，相当于一根普通圆珠笔芯的直径左右。您也可以参考示意图。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/5-2.jpeg"
+        media_type: "image"
 
   utter_太薄:
     - text: "饼干越薄，口感越脆；如果想要酥松的口感，建议适当缩短烘烤时间。"
@@ -170,9 +213,15 @@ responses:
 
   utter_铺油纸:
     - text: "您可以裁剪和烤盘内缘一样大小的油纸，直接铺在烤盘中。参考示意图。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/5-9.jpeg"
+        media_type: "image"
 
   utter_饼干间距:
     - text: "您需要先在烤盘中铺好油纸，然后上下左右间隔7毫米左右，将饼干均匀的摆在烤盘上。参考示意图。"
+      custom:
+        media_url: "https://bakingresource.blob.core.windows.net/media/8-8.jpeg"
+        media_type: "image"
 
   utter_预热烤箱:
     - text: "烤箱上有两个旋钮，上面的旋钮是上火，下面的旋钮是下火。将时间旋钮逆时针转动即可开始预热。"
